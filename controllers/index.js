@@ -1,3 +1,5 @@
 exports.showIndex=(req,res)=>{
-	res.send('get showIndex')
+	res.render('index.html',{
+		user:req.session.user
+	})
 }

@@ -22,7 +22,7 @@ router
    .post('/signin',userController.signin)
    .get('/signup',userController.showSignup)
    .post('/signup',userController.signup)
-   .get('/singout',userController.signout)
+   .get('/signout',userController.signout)
 
 // 话题相关
 router
