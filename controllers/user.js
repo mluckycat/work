@@ -1,10 +1,10 @@
 const user = require('../models/user')
 const md5 = require('blueimp-md5')
 
-exports.showSignin=(req,res)=>{
+exports.showSignin=(req,res,next)=>{
   res.render('signin.html')
 }
-exports.signin=(req,res)=>{
+exports.signin=(req,res,next)=>{
    // 获取表单POST提交数据
    // 普通数据验证
    // 业务数据验证
@@ -14,9 +14,11 @@ exports.signin=(req,res)=>{
  
    user.findByEmail(body.email,(err,ret)=>{
    	if(err){
-   		return res.status(500).json({
-   			error:err.message
-   		})
+   		// return res.status(500).json({
+   		// 	error:err.message
+   		// })
+   		// 传参的next方法会自动向后匹配到具有4个参数的应用程序处理级别中间
+   	  return next(err)
    	}
    	// 如果用户不存在
    	if(!ret){
@@ -41,10 +43,10 @@ exports.signin=(req,res)=>{
     })
    })
 }
-exports.showSignup=(req,res)=>{
+exports.showSignup=(req,res,next)=>{
 	res.render('signup.html')
 }
-exports.signup=(req,res)=>{
+exports.signup=(req,res,next)=>{
 	// 接收表单提交的数据 
 	// 配置body-parser中间件解析表单POST请求体
 	// 验证数据的有效性
@@ -55,9 +57,8 @@ exports.signup=(req,res)=>{
 	// 校验邮箱是否被占用
 	user.findByEmail(body.email,(err,ret)=>{
 		if(err){
-			return res.status(500).json({
-				error:err.message
-			})
+
+			return next(err)
 		}
 		if(ret){
 			return res.status(200).json({
@@ -68,9 +69,7 @@ exports.signup=(req,res)=>{
 	})
 	user.findByNickname(body.nickname,(err,ret)=>{
 		if(err){
-			return res.status(500).json({
-				error:err.message
-			})
+			return next(err)
 		}
 		if(ret){
 			return res.status(200).json({
@@ -84,9 +83,7 @@ exports.signup=(req,res)=>{
 	// 持久化存储用户信息
 	user.save(body,(err,results)=>{
 		if(err){
-			return err.status(500).json({
-				error:err.message
-			})
+			return next(err)
 		}
 		// 注册即登录 使用session保存登录状态
 		req.session.user={
@@ -101,7 +98,7 @@ exports.signup=(req,res)=>{
 	})
 
 }
-exports.signout=(req,res)=>{
+exports.signout=(req,res,next)=>{
 	// 清除session
 	delete req.session.user
 

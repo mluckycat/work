@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser= require('body-parser')
 const session = require('express-session')
+const {checkLogin} = require('./middlewares/auth')
 const app = express()
 
 // const router = require('./router')
@@ -27,12 +28,31 @@ app.use(session({
 	resave:false,
 	saveUninitialized:true
 }))
+// 该中间件一定要写在配置session中间件以及我们的路由之前
+app.use((req,res,next)=>{
+	app.locals.user = req.session.user
+	next()
+})
 
 
 //挂载路由容器到app应用程序中使路由生效 
 // app.use(router)
 app.use(indexRouter)
 app.use(userRouter)
-app.use(topicRouter)
+app.use('/topic',checkLogin,topicRouter)
+
+//错误处理中间件
+//它需要显示的接收4个参数
+// err 错误对象
+// req请求对象
+// res 响应对象
+// next 下一个匹配的中间件
+
+app.use(function(err,req,res,next){
+	res.status(500).send({
+		error:err.message
+	})
+}) 
+
 
 app.listen(3000,()=>console.log('running...'))
