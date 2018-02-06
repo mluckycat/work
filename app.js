@@ -3,8 +3,10 @@ const bodyParser= require('body-parser')
 const session = require('express-session')
 const app = express()
 
-const router = require('./router')
-
+// const router = require('./router')
+const indexRouter = require('./routes/index')
+const userRouter = require('./routes/user')
+const topicRouter = require('./routes/topic')
 //开发静态资源
 app.use('/node_modules',express.static('./node_modules/'))
 app.use('/public',express.static('./public/'))
@@ -28,5 +30,9 @@ app.use(session({
 
 
 //挂载路由容器到app应用程序中使路由生效 
-app.use(router)
+// app.use(router)
+app.use(indexRouter)
+app.use(userRouter)
+app.use(topicRouter)
+
 app.listen(3000,()=>console.log('running...'))

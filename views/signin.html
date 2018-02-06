@@ -54,7 +54,6 @@
 
     function handleSignin() {
       var formData = $signinForm.serialize()
-      console.log(formData)
       $.ajax({
         url: '/signin',
         method: 'post',
